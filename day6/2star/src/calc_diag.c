@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "calc_diag.h"
 
-unsigned long long calc_diagonally(const char* filepath, char** ptr_buffer, const int matrix_rows){
+unsigned long long calc_vertically(const char* filepath, char** ptr_buffer, const int matrix_rows){
     FILE *fptr = fopen(filepath, "rb");
     if (!fptr) {
         return 0;
