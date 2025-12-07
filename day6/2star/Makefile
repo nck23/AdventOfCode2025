@@ -1,4 +1,4 @@
-SRCS = src/main.c src/get_matrix.c src/transpone_matrix.c
+SRCS = src/main.c src/calc_diag.c
 OBJS = $(SRCS:.c=.o)
 CFLAGS = -O0 -Iinclude -ggdb3
 
