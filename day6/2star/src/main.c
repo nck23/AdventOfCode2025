@@ -4,12 +4,11 @@
 #include "calc_diag.h"
 
 int main(){
-    const int matrix_rows = 5;
-    const int matrix_columns = 1000;
+    const int matrix_rows = 4;
     char* my_buffer = NULL;
-    int output;
-    output = calc_diagonally("input.txt", &my_buffer, matrix_rows, matrix_columns);
-    printf("final: %d\n", output);
+    unsigned long long output;
+    output = calc_diagonally("input.txt", &my_buffer, matrix_rows);
+    printf("final: %lld\n", output);
 
     if (my_buffer) free(my_buffer);
     return 0;

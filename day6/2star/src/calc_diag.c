@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "calc_diag.h"
 
-int calc_diagonally(const char* filepath, char** ptr_buffer, const int matrix_rows, const int matrix_columns){
+unsigned long long calc_diagonally(const char* filepath, char** ptr_buffer, const int matrix_rows){
     FILE *fptr = fopen(filepath, "rb");
     if (!fptr) {
         return 0;
@@ -19,24 +19,22 @@ int calc_diagonally(const char* filepath, char** ptr_buffer, const int matrix_ro
     fread(*ptr_buffer, 1, dlugosc, fptr);
     (*ptr_buffer)[dlugosc] = '\0'; // nawiasy bo priorytety operatorow
     fclose(fptr);
-
-    int end_of_line = ((dlugosc - 1) / matrix_rows); // dlugosc - 1 bo \0 i -1 kolejne bo indeks od zera
+    // assign end of line integer with buffer
+    int end_of_line = ((dlugosc - 1) / matrix_rows); 
     char* buffer = *ptr_buffer;
+    unsigned long long value = 0;
+    unsigned long long final_result = 0;
 
-
-    // read diagonally
-    // i = i * (matrix_rows - 1) + matrix_columns - 1; // get to the lowest row
-    int final_result = 0;
-    // MAYBE CHANGE THIS
-    int value_matrix[matrix_rows - 1]; // to store values which are in diagonal order (-1 cuz last is */+ or None)
+    int value_matrix[matrix_rows - 1];
     int which = 0; // for iterating through value matrix
 
     char last_char = '0';
     int current_col_start = 0;
-    int j = current_col_start; // to iterate through buffer diagonally
+    int j = current_col_start; // to iterate through buffer
 
+    int iterator = 0;
     while (current_col_start < end_of_line)  {
-        if (j >= dlugosc - 1) { // git
+        if (j >= dlugosc - 1) {
             which = 0;
             int check = 0;
             // logic for logging if whole column was empty
@@ -48,28 +46,32 @@ int calc_diagonally(const char* filepath, char** ptr_buffer, const int matrix_ro
             // printf("check value: %d\n", check);
             if (check == (matrix_rows - 1)) {
                 last_char = '0';
-                printf("PUSTE!\n");
+                final_result += value;
+                // printf("DODANIE: %lld, WYNIK: %lld\n", value, final_result);
+                value = 0;
+                // printf("PUSTE!\n");
             } else if (last_char != '0') {
-                int value = 0;
-                if (last_char == '+'){
-                    for (check = 0; check < matrix_rows - 1; check++) {
-                        value += value_matrix[check];
-                    }
-                } else {
-                    value = 1;
-                    for (check = 0; check < matrix_rows - 1; check++) {
-                        if (value_matrix[check] != 0){
-                            value *= value_matrix[check];
-                        }
+                long combined_value = 0;
+                for (check = 0; check < matrix_rows - 1; check++) {
+                    if (value_matrix[check] != 0) {
+                        combined_value = combined_value * 10 + value_matrix[check];
                     }
                 }
-                printf("DODANIE: %d, %c\n", value, last_char);
-                final_result += value;
-            }
+                // printf("COMBINED VALUE: %lld\n", combined_value);
+                if (last_char == '+'){
+                    value += combined_value;
+                } else {
+                    if (value == 0) {
+                        value = 1;
+                    }
+                    value *= combined_value;
+                }
+                // printf("updated: %lld\n", value);
+                }
+            // final_result += value;
             current_col_start++;
             j = current_col_start;
             which = 0;
-            
             continue;
         }
         if (j < dlugosc){
@@ -81,15 +83,13 @@ int calc_diagonally(const char* filepath, char** ptr_buffer, const int matrix_ro
                 value_matrix[which] = buffer[j] - '0';
             }
             if (which < matrix_rows - 1){
-                printf("V: %d, j: %d\n", value_matrix[which], j);
+                // printf("V: %d, j: %d\n", value_matrix[which], j);
             } 
-            
         } else {
             printf("CZYTANIE POZA DLUGOSCIA!\n");
         }
         which++;
         j+= end_of_line + 1;
     }
-
     return final_result;
 }
