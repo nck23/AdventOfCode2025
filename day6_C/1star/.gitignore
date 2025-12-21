@@ -1,0 +1,6 @@
+*.o
+main
+get_matrix.o
+main.o
+transpone_matrix.o
+new_core.*
